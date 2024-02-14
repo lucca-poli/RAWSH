@@ -15,7 +15,11 @@ func main() {
 	fmt.Printf("$ ")
 	for scanner.Scan() {
 		line := scanner.Text()
-		tokens := tokenizer.Tokenize(line)
+		tokens, err := tokenizer.Tokenize(line)
+
+        if err != nil {
+            fmt.Println(err)
+        }
 
 		for _, token := range tokens {
 			fmt.Println(token)
