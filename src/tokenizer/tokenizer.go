@@ -13,6 +13,7 @@ func Tokenize(line string) ([]string, error) {
 	var quoted *byte
 	for i := 0; i < len(sanitized_line); i++ {
 		token = fmt.Sprint(token, string(sanitized_line[i]))
+        fmt.Println("token is:", token)
 
 		if quoted != nil || ((sanitized_line[i] == '"' || sanitized_line[i] == '\'') && (i == 0 || sanitized_line[i-1] != '\\')) {
 			if quoted != nil && sanitized_line[i] == *quoted {
@@ -25,14 +26,11 @@ func Tokenize(line string) ([]string, error) {
 				temp := sanitized_line[i]
 				quoted = &temp
 			}
-			continue
-		}
-
-		if sanitized_line[i] == ' ' || (i == len(sanitized_line)-1 && len(token) != 0) {
-            if token == " " {
-                token = ""
-                continue
-            }
+		} else if sanitized_line[i] == ' ' || (i == len(sanitized_line)-1 && len(token) != 0) {
+			if token == " " {
+				token = ""
+				continue
+			}
 			tokens = append(tokens, token)
 			token = ""
 		}
