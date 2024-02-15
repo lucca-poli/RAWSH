@@ -2,6 +2,7 @@ package internal
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -30,8 +31,10 @@ func MapAliases(reader io.Reader) (map[string]string, error) {
         if tokens != nil && tokens[0] == "alias" {
             matched, err := regexp.MatchString(`^[a-z_]+=".*"$`, tokens[1])
 
-            if err != nil || !matched {
+            if err != nil {
                 return aliases, err
+            } else if !matched {
+                return aliases, errors.New("Bad pattern")
             } else {
                 alias := strings.SplitN(tokens[1], "=", 2)
                 aliases[alias[0]] = alias[1][1:len(alias[1])-1] // Passing the string from inside the quotes to the alias
