@@ -1,10 +1,10 @@
 package main
 
 import (
+	"RAWSH/src/internal"
 	"bufio"
 	"fmt"
 	"os"
-	"RAWSH/src/pkg"
 )
 
 func main() {
@@ -13,7 +13,7 @@ func main() {
 	fmt.Printf("$ ")
 	for scanner.Scan() {
 		line := scanner.Text()
-		tokens, err := tokenizer.Tokenize(line)
+		tokens, err := internal.Tokenize(line)
 
         if err != nil {
             fmt.Println(err)
