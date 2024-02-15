@@ -1,11 +1,12 @@
 package tokenizer
 
 import (
+	tokenizer "RAWSH/src/pkg"
 	"testing"
 )
 
 func TestTokenizerDoubleQuoted(t *testing.T) {
-	result, _ := Tokenize("echo \"batata\"")
+	result, _ := tokenizer.Tokenize("echo \"batata\"")
 	expected := []string{"echo", "batata"}
 
 	length := len(expected)
@@ -22,7 +23,7 @@ func TestTokenizerDoubleQuoted(t *testing.T) {
 }
 
 func TestTokenizerSingleQuoted(t *testing.T) {
-	result, _ := Tokenize("echo 'batata'")
+	result, _ := tokenizer.Tokenize("echo 'batata'")
 	expected := []string{"echo", "batata"}
 
 	length := len(expected)
@@ -39,7 +40,7 @@ func TestTokenizerSingleQuoted(t *testing.T) {
 }
 
 func TestTokenizerMixedQuotes(t *testing.T) {
-	result, _ := Tokenize("\"echo\" \"arroz com 'batata e' feijao\"")
+	result, _ := tokenizer.Tokenize("\"echo\" \"arroz com 'batata e' feijao\"")
 	expected := []string{"echo", "arroz com 'batata e' feijao"}
 
 	length := len(expected)
@@ -56,7 +57,7 @@ func TestTokenizerMixedQuotes(t *testing.T) {
 }
 
 func TestTokenizerUnquoted(t *testing.T) {
-	result, _ := Tokenize("   ls -a ~/*")
+	result, _ := tokenizer.Tokenize("   ls -a ~/*")
 	expected := []string{"ls", "-a", "~/*"}
 
 	length := len(expected)

@@ -4,9 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	// "os/exec"
-	// "strings"
-	"RAWSH/src/tokenizer"
+	"RAWSH/src/pkg"
 )
 
 func main() {
