@@ -13,7 +13,7 @@ func main() {
 	fmt.Printf("$ ")
 	for scanner.Scan() {
 		line := scanner.Text()
-		tokens, err := internal.Tokenize(line)
+		tokens, err := internal.Tokenizer(line)
 
         if err != nil {
             fmt.Println(err)

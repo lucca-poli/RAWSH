@@ -10,7 +10,18 @@ import (
 	"strings"
 )
 
-func GetConfigPath() string {
+type shellSession struct {
+    aliases map[string]string
+}
+
+func CreateShellSession() shellSession {
+    return shellSession {
+        aliases: nil,
+    }
+}
+
+// n sei oq fazer com isso
+func getConfigPath() string {
     defaultPath := "~/.rawrc"
 
     configFile, err := os.Create(defaultPath)
@@ -22,7 +33,8 @@ func GetConfigPath() string {
     return defaultPath
 }
 
-func MapAliases(reader io.Reader) (map[string]string, error) {
+// e nem isso
+func mapAliases(reader io.Reader) (map[string]string, error) {
     aliases := make(map[string]string)
     scanner := bufio.NewScanner(reader)
 
