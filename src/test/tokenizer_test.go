@@ -5,6 +5,17 @@ import (
 	"testing"
 )
 
+// func TestTokenizerClassifier(t *testing.T) {
+// 	result, _ := internal.Tokenizer("echo 'batata com arroz' | grep arroz")
+//     expected := []string{"word", "word", "operator", "word", "word"}
+//
+//     for i, token := range result {
+//         if token.TokenType != expected[i] {
+//             t.Errorf("Expected %s, got %s", expected[i], token.TokenType)
+//         }
+//     }
+// }
+
 func TestTokenizerDoubleQuoted(t *testing.T) {
 	result, _ := internal.Tokenizer("echo \"batata\"")
 	expected := []string{"echo", "\"batata\""}
@@ -16,15 +27,15 @@ func TestTokenizerDoubleQuoted(t *testing.T) {
 	}
 
 	for i := 0; i < length; i++ {
-		if result[i] != expected[i] {
+		if result[i].Value != expected[i] {
 			t.Errorf("Expected %v, got %v", expected, result)
 		}
 	}
 }
 
 func TestTokenizerSingleQuoted(t *testing.T) {
-	result, _ := internal.Tokenizer("echo 'batata'")
-	expected := []string{"echo", "'batata'"}
+	result, _ := internal.Tokenizer("echo 'batata com arroz' | grep arroz")
+	expected := []string{"echo", "'batata com arroz'", "|", "grep", "arroz"}
 
 	length := len(expected)
 
@@ -33,7 +44,7 @@ func TestTokenizerSingleQuoted(t *testing.T) {
 	}
 
 	for i := 0; i < length; i++ {
-		if result[i] != expected[i] {
+		if result[i].Value != expected[i] {
 			t.Errorf("Expected %v, got %v", expected, result)
 		}
 	}
@@ -50,7 +61,7 @@ func TestTokenizerMixedQuotes(t *testing.T) {
 	}
 
 	for i := 0; i < length; i++ {
-		if result[i] != expected[i] {
+		if result[i].Value != expected[i] {
 			t.Errorf("Expected %v, got %v", expected, result)
 		}
 	}
@@ -67,7 +78,7 @@ func TestTokenizerUnquoted(t *testing.T) {
 	}
 
 	for i := 0; i < length; i++ {
-		if result[i] != expected[i] {
+		if result[i].Value != expected[i] {
 			t.Errorf("Expected %v, got %v", expected, result)
 		}
 	}

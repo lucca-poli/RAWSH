@@ -6,11 +6,13 @@ import (
 	"strings"
 )
 
-type word = string
-type operator = string
+type Token struct {
+	Value     string
+	TokenType string
+}
 
-func Tokenizer(line string) ([]string, error) {
-	var tokens []string
+func Tokenizer(line string) ([]Token, error) {
+	var tokens []Token
 	trimmedLine := strings.Trim(line, " ")
 	ignoredQuotesTokens := strings.SplitAfter(trimmedLine, " ")
 	pattern := regexp.MustCompile(`('[^']*'|"[^"\\]*(?:\\.[^"\\]*)*")\s*`) // bash quoting rules
@@ -21,7 +23,7 @@ func Tokenizer(line string) ([]string, error) {
 	for i := 0; i < len(trimmedLine); {
 		if isQuoted(i, matches) {
 			interval := matches[quotedCount]
-			tokens = append(tokens, word(strings.Trim(trimmedLine[interval[0]:interval[1]], " ")))
+			tokens = append(tokens, Token{strings.Trim(trimmedLine[interval[0]:interval[1]], " "), "word"})
 			i = interval[1]
 			for j := interval[0]; j < i; splitCount++ {
 				j += len(ignoredQuotesTokens[splitCount])
@@ -32,12 +34,12 @@ func Tokenizer(line string) ([]string, error) {
 			quotedCount++
 		} else if isOperator(trimmedLine[i : i+len(ignoredQuotesTokens[splitCount])]) {
 			token := ignoredQuotesTokens[splitCount]
-			tokens = append(tokens, operator(strings.Trim(token, " ")))
+			tokens = append(tokens, Token{strings.Trim(token, " "), "operator"})
 			i += len(token)
 			splitCount++
 		} else {
 			token := ignoredQuotesTokens[splitCount]
-			tokens = append(tokens, word(strings.Trim(token, " ")))
+			tokens = append(tokens, Token{strings.Trim(token, " "), "word"})
 			i += len(token)
 			splitCount++
 		}
