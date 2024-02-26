@@ -62,7 +62,7 @@ func unquoteToken(lastQuote rune, currentToken string) (rune, string) {
 			if char == '"' && (i == 0 || currentToken[i-1] != '\\') {
 				lastQuote = 0
 			}
-		case (char == '\'' || char == '"') && (i == 0 || currentToken[i-1] != '\\'):
+		case lastQuote == 0 && (char == '\'' || char == '"') && (i == 0 || currentToken[i-1] != '\\'):
 			lastQuote = char
 		default:
 			unquotedToken = fmt.Sprint(unquotedToken, string(char))
