@@ -56,10 +56,7 @@ func unquoteToken(lastQuote rune, currentToken string) (rune, string) {
 	for i, char := range currentToken {
 		switch {
 		case lastQuote != 0 && char == lastQuote:
-			if char == '\'' {
-				lastQuote = 0
-			}
-			if char == '"' && (i == 0 || currentToken[i-1] != '\\') {
+			if char == '\'' || (char == '"' && (i == 0 || currentToken[i-1] != '\\')) {
 				lastQuote = 0
 			}
 		case lastQuote == 0 && (char == '\'' || char == '"') && (i == 0 || currentToken[i-1] != '\\'):
@@ -109,4 +106,3 @@ func isMetachar(char rune) bool {
 
 	return false
 }
-
