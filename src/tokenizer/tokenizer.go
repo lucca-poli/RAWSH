@@ -1,39 +1,112 @@
 package tokenizer
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
 
 func Tokenize(line string) ([]string, error) {
-	sanitized_line := strings.Trim(line, " ")
+	spaceParsed := strings.SplitAfter(strings.Trim(line, " "), " ")
+	var operatorParsed []string
+
+	for _, parsed := range spaceParsed {
+		operatorParsed = append(operatorParsed, parseOperators(parsed)...)
+	}
+
+	fullParsed, err := aggregateQuotes(operatorParsed)
 
 	var tokens []string
-	var token string
-	var quoted *byte
-	for i := 0; i < len(sanitized_line); i++ {
-		token = fmt.Sprint(token, string(sanitized_line[i]))
+	for _, token := range fullParsed {
+		token = strings.Trim(token, " ")
 
-		if quoted != nil || ((sanitized_line[i] == '"' || sanitized_line[i] == '\'') && (i == 0 || sanitized_line[i-1] != '\\')) {
-			if quoted != nil && sanitized_line[i] == *quoted {
-				token = token[:len(token)-1]
-				tokens = append(tokens, token)
-				token = ""
-				quoted = nil
-			} else if quoted == nil {
-				token = ""
-				temp := sanitized_line[i]
-				quoted = &temp
-			}
-		} else if sanitized_line[i] == ' ' || (i == len(sanitized_line)-1 && len(token) != 0) {
-			if strings.Trim(token, " ") == "" {
-				token = ""
-				continue
-			}
-			tokens = append(tokens, strings.Trim(token, " "))
+		if token != "" {
+			tokens = append(tokens, token)
+		}
+	}
+
+	return tokens, err
+}
+
+func aggregateQuotes(parses []string) ([]string, error) {
+	var tokens []string
+	var quote rune
+	var token, unquotedStr string
+
+	for _, parsed := range parses {
+		quote, unquotedStr = unquoteToken(quote, parsed)
+		token = fmt.Sprint(token, unquotedStr)
+
+		if quote == 0 {
+			tokens = append(tokens, token)
 			token = ""
 		}
 	}
 
+	if quote != 0 {
+		return tokens, errors.New("Bad quoting")
+	}
+
 	return tokens, nil
 }
+
+func unquoteToken(lastQuote rune, currentToken string) (rune, string) {
+	var unquotedToken string
+
+	for i, char := range currentToken {
+		switch {
+		case lastQuote != 0 && char == lastQuote:
+			if char == '\'' {
+				lastQuote = 0
+			}
+			if char == '"' && (i == 0 || currentToken[i-1] != '\\') {
+				lastQuote = 0
+			}
+		case (char == '\'' || char == '"') && (i == 0 || currentToken[i-1] != '\\'):
+			lastQuote = char
+		default:
+			unquotedToken = fmt.Sprint(unquotedToken, string(char))
+		}
+	}
+
+	return lastQuote, unquotedToken
+}
+
+func parseOperators(s string) []string {
+	var tokens []string
+	var operator string
+	lastOperatorIdx := -1
+
+	for i, char := range s {
+
+		if isMetachar(char) {
+			if operator == "" {
+				tokens = append(tokens, s[lastOperatorIdx+1:i])
+			}
+
+			operator = fmt.Sprint(operator, string(char))
+		}
+
+		if operator != "" && !isMetachar(char) {
+			tokens = append(tokens, operator)
+			operator = ""
+			lastOperatorIdx = i - 1
+		}
+	}
+	tokens = append(tokens, s[lastOperatorIdx+1:])
+
+	return tokens
+}
+
+func isMetachar(char rune) bool {
+	metachars := []rune{'|', '<', '>', '&', '(', ')', ';'}
+
+	for _, c := range metachars {
+		if char == c {
+			return true
+		}
+	}
+
+	return false
+}
+
