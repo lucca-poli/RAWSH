@@ -72,6 +72,40 @@ func TestTokenizerOperator(t *testing.T) {
 	}
 }
 
+func TestTokenizerQuotedOperator(t *testing.T) {
+	result, _ := Tokenize("echo \"I like feijao &arroz\"")
+	expected := []string{"echo", "I like feijao &arroz"}
+
+	length := len(expected)
+
+	if len(result) != length {
+		t.Errorf("Lengths are different")
+	}
+
+	for i := 0; i < length; i++ {
+		if result[i] != expected[i] {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+	}
+}
+
+func TestTokenizerManyQuotes(t *testing.T) {
+	result, _ := Tokenize("grep I' see 'conf\"usi\"on test")
+	expected := []string{"grep", "I see confusion", "test"}
+
+	length := len(expected)
+
+	if len(result) != length {
+		t.Errorf("Lengths are different")
+	}
+
+	for i := 0; i < length; i++ {
+		if result[i] != expected[i] {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+	}
+}
+
 func TestTokenizerUnquoted(t *testing.T) {
 	result, _ := Tokenize("   ls -a ~/*")
 	expected := []string{"ls", "-a", "~/*"}
